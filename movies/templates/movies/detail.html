@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+
+{% block content %}
+<div class="movie-poster pb-5 pt-3">
+  <h1 class="fw-bold text-light px-5" style="padding-top:300px;">{{ movie.title }}</h1>
+  <hr>
+  <div class="text-light mx-5 my-5">
+    <p class="m-1">개봉일 : {{ movie.released_date }}</p>
+    <p class="m-1">장르 : 
+      {% for genre in genres  %}
+      {{ genre.name }},
+      {% endfor %}
+    </p>
+    <p class="m-1">평점 : {{ movie.vote_average }}</p>
+    <p class="m-1">{{ movie.overview }}</p>
+  </div>
+  <div class="m-5 text-light pb-5">
+    <h3> 영화 리뷰 </h3>
+    <hr>
+    <div class="review-container">
+      {% if articles %}
+        {% for article in articles %}
+        <div class="card text-bg-dark mb-3" style="width: 17rem; display: inline-block;">
+          <div class="card-header">{{ article.user_id }}님의 후기</div>
+          <div class="card-body">
+            <p class="card-text">별점 : {{ article.stars }}</p>
+            <p class="card-text">{{ article.oneline_comment }}</p>
+            <a href="{% url 'articles:detail' article.pk %}" class="text-secondary">자세히 보기</a>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p>아직 리뷰가 등록되지 않았어요!</p>
+        {% if request.user.is_authenticated %}
+          <a href="{% url 'articles:create' %}" class="btn btn-outline-light">후기 작성하러 가기</a>
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="btn btn-outline-light">로그인하고 후기 남기기</a>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>  
+{% endblock content %}
+
+
+{% block script %}
+
+{% endblock script %}

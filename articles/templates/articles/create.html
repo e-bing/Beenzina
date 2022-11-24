@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container">
+    <a href="{% url 'accounts:profile' user %}" class="btn mt-3 mx-2" style="display: inline-block;">◀</a>
+    <hr>
+    <div style="width: 20vw; margin: auto; justify-content: center;">
+      <img src="{% static 'Diary.png' %}" alt="my diary" style="width: 20vw;">
+    </div>
+    <form action="" method="POST" id="article-create">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <a class="btn btn-outline-secondary" style="display: inline-block; color: black; text-decoration: none;" type="submit" onclick="document.getElementById('article-create').submit();">글쓰기</a>
+    </form>
+    <hr>
+  </div>
+{% endblock content %}
+
+{% block script %}
+
+{% endblock script %}

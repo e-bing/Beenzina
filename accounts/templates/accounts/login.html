@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+
+{% block content %}
+<div class="container text-center" style="padding:20px">
+  <img src="{% static 'login.png' %}" style="width:25%; height:20%;"alt="login logo">
+</div>
+<div class="container">
+  <div class="d-flex justify-content-center" style="background-color:#f7f7fc; border-radius: 30px; padding:30px">
+  <form action="{% url 'accounts:login' %}" method="POST">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <div class="d-grid gap-2 col-6 mx-auto">
+      <button class="btn my-3" style="background-color:#8281CA; color:white;" type="submit">Login</button>
+    </div>
+  </form>
+</div>
+{% endblock  %}

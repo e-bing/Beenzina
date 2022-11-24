@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% load static %}
+
+{% block content %}
+  <div class="d-flex flex-row">
+    <side class="col-2" style="background-color:#f7f7fc; height: max(auto, 100vh);">
+    </side>
+    <section class="col-10">
+      <div class="d-flex-inline align-items-center text-center" style="background-color:#e8e5fb; height:14rem;">
+        <div class="rings">
+          <div><img src="{% static 'ring.png' %}" alt=""></div>
+          <div><img src="{% static 'ring.png' %}" alt=""></div>
+          <div><img src="{% static 'ring.png' %}" alt=""></div>
+        </div>
+        {% if request.user == person %}
+          <h1 class="user-name">나의 다이어리</h1><br>
+          <div class="d-flex">
+            <a href='{% url 'articles:create' %}' style="margin: 0.5rem; margin-left: auto;">
+              <div class='create-bookmark' style="text-align:center;">
+                <p class="" style="text-align: right; padding: 1rem; margin: 0;">
+                  create
+                </p>
+              </div>
+            </a>
+          </div>
+          {% with followings=person.followings.all followers=person.followers.all %}
+          <div class="follow-container d-flex" style="margin-right: 0.4rem;">
+            <button type="button" class="btn btn-outline-violet follow-box" data-bs-toggle="modal" data-bs-target="#followings" style="margin-left: auto;">
+              <span>following
+                <div id="followings-count">
+                  {{ followings|length }}
+                </div>
+              </span></button>
+            <button type="button" class="btn btn-outline-violet follow-box" data-bs-toggle="modal" data-bs-target="#followers">
+              <span>followers
+                <div id="followers-count">{{ followers|length }}</div>
+              </span></button>
+          </div>
+            <!-- Modal -->
+          <div class="modal fade" id="followers" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">나를 팔로잉하는 친구 목록</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  {% for follower in person.followers.all %}
+                  <div class="mt-2">
+                    <a href="{% url 'accounts:profile' follower.username %}"><i class="fa-solid fa-user"></i>&emsp;{{ follower.username }}</a>
+                  </div>
+                  {% endfor %}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Modal -->
+          <div class="modal fade" id="followings" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">내가 팔로잉하는 친구 목록</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  {% for following in person.followings.all %}
+                    <a href="{% url 'accounts:profile' following.username %}"><i class="fa-solid fa-user"></i>&emsp;{{ following.username }}</a>
+                  {% endfor %}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endwith %}
+        {% else %}
+          <h1 class="user-name">{{ person.username }}님의 다이어리</h1><br>
+          <!-- 팔로우/언팔로우 버튼 -->
+          <div>
+            <form id="follow-form" data-user-id="{{ person.pk }}">
+              {% csrf_token %}
+              {% if request.user in person.followers.all %}
+              <div class="d-flex">
+                <button class="btn" style="margin-left: auto;border: 0; outline: 0; background-color: rgba(0, 0, 0, 0); ">
+                  <div class='create-bookmark' style="text-align:center;">
+                    <p class="px-3 m-0" id="followBtn" style="text-align: right; padding: 1rem;">
+                      언팔로우
+                    </p>
+                  </div>
+                </button>
+              </div>
+                {% comment %} <button id="followBtn" class="btn" style="background-color:#8281CA; color:white;">언팔로우</button> {% endcomment %}
+              {% else %}
+              <div class="d-flex">
+                <button class="btn" style="margin-left: auto;border: 0; outline: 0; background-color: rgba(0, 0, 0, 0); ">
+                  <div class='create-bookmark' style="text-align:center;">
+                    <p class="px-3 m-0" id="followBtn" style="text-align: right; padding: 1rem;">
+                      팔로우
+                    </p>
+                  </div>
+                </button>
+              </div>
+                {% comment %} <button id="followBtn" class="btn" style="background-color:#8281CA; color:white;">팔로우</button> {% endcomment %}
+              {% endif %}
+            </form>
+          </div>
+          {% with followings=person.followings.all followers=person.followers.all %}
+            <div class="follow-container d-flex" style="margin-right: 0.4rem;">
+              <button type="button" class="btn btn-outline-violet follow-box" data-bs-toggle="modal" data-bs-target="#followings" style="margin-left: auto;">
+                <span>following
+                  <div id="followings-count">
+                    {{ followings|length }}
+                  </div>
+                </span></button>
+              <button type="button" class="btn btn-outline-violet follow-box" data-bs-toggle="modal" data-bs-target="#followers">
+                <span>followers
+                  <div id="followers-count">{{ followers|length }}</div>
+                </span></button>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="followers" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">{{ person.username }}님을 팔로잉하는 친구 목록</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    {% for follower in person.followers.all %}
+                    <div class="mt-2 ">
+                      <a href="{% url 'accounts:profile' follower.username %}"><i class="fa-solid fa-user"></i>&emsp;{{ follower.username }}</a>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="followings" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">{{ person.username }}님이 팔로잉하는 친구 목록</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    {% for following in person.followings.all %}
+                      <a href="{% url 'accounts:profile' following.username %}"><i class="fa-solid fa-user"></i>&emsp;{{ following.username }}</a>
+                    {% endfor %}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endwith %}
+        {% endif %}
+      </div>
+
+      <div class="d-flex flex-wrap justify-content-between">
+        {% for article in articles %}
+          <div class="profile-movie my-4" style="margin: 0rem 5vw;">
+            <a href="{% url 'articles:detail' article.pk %}" style="color: black; ">
+              <p class="profile-movie-title">{{ article.movie.title }}</p>
+              <img src="{{ article.movie.poster_path}}" class="profile-movie-img">
+              <div class="profile-movie-text">
+                <p>{{ article.user_id }}</p>
+                <p>{{ article.movie.released_date }}</p>
+                <p>{{ article.oneline_comment }}</p>
+              </div>
+              {% comment %} <p class="user-name" style="margin-bottom:2px;">별점 :
+                <span id="stars">{{ article.stars }}</span>
+              </p> {% endcomment %}
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+{% endblock %}
+
+{% block script %}
+<script>
+  {% comment %} const stars = document.querySelector('#stars')
+
+  while (stars.innerText >= 1) {
+    console.log(stars.innerText)
+    var i = document.createElement('i')
+    i.setAttribute("class","fa-solid fa-star")
+    stars.appendChild(i)
+    stars.innerText--
+  }
+  if (stars.innerText == 0.5) {
+    const i = document.createElement('i')
+    i.setAttribute("class","fa-solid fa-star-half")
+    stars.appendChild(i)
+  } {% endcomment %}
+
+  const followForm = document.querySelector('#follow-form')
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
+
+  followForm.addEventListener('submit',function (event) {
+    event.preventDefault()
+    const userId = event.target.dataset.userId
+
+    axios({
+      method: 'post',
+      url: `/accounts/${userId}/follow/`,
+      headers: {'X-CSRFToken': csrfToken}
+    })
+        .then((res) => {
+          console.log(res)
+          const isFollowed = res.data.is_followed
+          console.log(isFollowed)
+          if (isFollowed === true) {
+            const followBtn = document.querySelector('#followBtn')
+            followBtn.innerText = '언팔로우'
+          } else {
+            followBtn.innerText = '팔로우'
+          }
+
+          const followingsCountTag = document.querySelector('#followings-count')
+          const followersCountTag = document.querySelector('#followers-count')
+          const followersCount= res.data.followers_count
+          const followingsCount= res.data.followings_count
+          followersCountTag.innerText = followersCount
+          followingsCountTag.innerText = followingsCount
+        })
+  })
+</script>
+{% endblock script %}

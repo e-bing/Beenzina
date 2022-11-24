@@ -1,0 +1,25 @@
+{% load static %}
+<nav class="navbar" style="background: #2c1c64;">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'movies:index' %}">
+      <img src={% static "logo.png" %} width="45" height="50" class="d-inline-block align-text-top">
+      <div class="justify-content-center text-light"> Mov:e </div>
+    </a>
+    {% if user.is_authenticated %}
+    <div>
+      <h4 class="text-light mx-3" style="display: inline-block; font-family: 'Gaegu', cursive;">{{ user.username }} 님</h4>
+      <a href="{% url 'movies:index'%}" class="mx-2 text-light"><i class="fa-solid fa-house fa-lg"></i></a>
+      <a href="{% url 'accounts:profile' user %}" class="mx-2 text-light"><i class="fa-solid fa-user fa-lg"></i></a>
+      <form action="{% url 'accounts:logout' %}"  class="mx-2 text-light" method="POST" style="display:inline">
+        {% csrf_token %}
+        <input type="submit" value="Logout" class="btn btn-outline-light">
+      </form>
+    </div>
+    {% else %}
+    <div>
+      <a href="{% url 'accounts:signup' %}" class="mx-2 text-light" style="display: inline-block; font-family: 'Gaegu', cursive;">Sign Up</a>
+      <a href="{% url 'accounts:login' %}" class="mx-2 text-light" style="display: inline-block; font-family: 'Gaegu', cursive;">Login</a>
+    </div>
+    {% endif %}
+  </div>
+</nav>
